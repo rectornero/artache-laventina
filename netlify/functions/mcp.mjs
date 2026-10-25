@@ -6,5 +6,5 @@ export default (req) => handleMcp(req, { store: blobStore() });
 
 export const config = {
   path: '/mcp/*',
-  rateLimit: { windowLimit: 60, windowSize: 60, aggregateBy: ['ip', 'domain'] },
+  rateLimit: { action: 'rate_limit', windowLimit: 60, windowSize: 60, aggregateBy: ['ip', 'domain'] },
 };
