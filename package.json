@@ -1,0 +1,15 @@
+{
+  "name": "laventina",
+  "private": true,
+  "type": "module",
+  "description": "Artache Laventina: a kind lavender butler for the household. Nothing runs on its own; nothing costs anything unless someone is using it.",
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^11.1.4"
+  }
+}

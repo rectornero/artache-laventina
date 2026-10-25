@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Laventina</title>
+<meta name="description" content="Artache Laventina, a kind lavender butler for the household.">
+<meta name="theme-color" content="#18181B">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Nunito:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="/style.css">
+<script src="/js/theme.js"></script>
+<script type="module" src="/js/app.js"></script>
+</head>
+<body>
+<div class="room" aria-hidden="true">
+  <span class="glow g1"></span><span class="glow g2"></span><span class="glow g3"></span>
+  <span class="petal"></span><span class="petal"></span><span class="petal"></span><span class="petal"></span><span class="petal"></span>
+</div>
+<header class="bar">
+  <div class="bar-in">
+    <div class="who"><h1>Laventina</h1><small id="status">At your service</small></div>
+    <button class="round" id="story-btn" type="button" aria-label="The story" title="The story" hidden>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 4.5h9.5A4.5 4.5 0 0 1 19 9v10.5H9.5A4.5 4.5 0 0 1 5 15Z M9 9h6M9 13h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="round" id="menu-btn" type="button" aria-label="Menu" title="Menu" hidden>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="5" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="19" cy="12" r="1.8" fill="currentColor"/></svg>
+    </button>
+  </div>
+</header>
+<section class="presence" aria-hidden="true">
+  <div class="butler-sprig" id="butler">
+    <svg viewBox="0 0 48 48">
+      <g class="plant">
+        <path d="M24 42V17" stroke="var(--stem)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <path d="M24 36c-3-1-6-4-7-7M24 33c3-1 5-3 6-6" stroke="var(--stem)" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+        <ellipse class="bud" cx="24" cy="11.5" rx="3.2" ry="4.2" fill="var(--bud-1)"/>
+        <ellipse class="bud" cx="19.8" cy="16.5" rx="3" ry="3.8" transform="rotate(-25 19.8 16.5)" fill="var(--bud-1)"/>
+        <ellipse class="bud" cx="28.2" cy="16.5" rx="3" ry="3.8" transform="rotate(25 28.2 16.5)" fill="var(--bud-1)"/>
+        <ellipse class="bud" cx="20.5" cy="22.5" rx="2.7" ry="3.4" transform="rotate(-30 20.5 22.5)" fill="var(--bud-2)"/>
+        <ellipse class="bud" cx="27.5" cy="22.5" rx="2.7" ry="3.4" transform="rotate(30 27.5 22.5)" fill="var(--bud-2)"/>
+        <ellipse class="bud" cx="21.3" cy="28" rx="2.3" ry="2.9" transform="rotate(-35 21.3 28)" fill="var(--bud-3)"/>
+        <ellipse class="bud" cx="26.7" cy="28" rx="2.3" ry="2.9" transform="rotate(35 26.7 28)" fill="var(--bud-3)"/>
+      </g>
+    </svg>
+  </div>
+</section>
+<main id="feed" aria-live="polite"></main>
+<footer class="dock" id="dock" hidden>
+  <div class="chips" id="quick"></div>
+  <form class="composer" id="composer" autocomplete="off">
+    <label class="sr" for="say">Tell Laventina</label>
+    <input id="say" name="say" maxlength="200" placeholder="A coupon? Say it in one sentence">
+    <button class="round send" type="submit" aria-label="Send">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </form>
+</footer>
+<dialog id="sheet"><div id="sheet-in"></div></dialog>
+</body>
+</html>

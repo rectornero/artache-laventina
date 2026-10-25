@@ -1,0 +1,27 @@
+# Artache Laventina. Read CLAUDE.md "Cost safety" before changing anything here.
+
+[build]
+  publish = "public"
+  command = "echo 'No build step: plain HTML, CSS and ES modules.'"
+
+[functions]
+  node_bundler = "esbuild"
+
+# A production deploy costs 15 credits. Pushes to the production branch only build when the
+# commit message says [deploy]; everything else waits. (Exit 0 = skip the build.)
+# Branch deploys and Deploy Previews are free and always build.
+[context.production]
+  ignore = "git log -1 --pretty=%B | grep -qF '[deploy]' && exit 1 || exit 0"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+    X-Frame-Options = "DENY"
+    Content-Security-Policy = "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; connect-src 'self'; frame-ancestors 'none'"
+
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"

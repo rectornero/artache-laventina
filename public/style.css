@@ -1,0 +1,167 @@
+/* Artache Laventina: one quiet room, lavender light and warm candle glows, a voice that speaks when it matters.
+   Night first, day on request. Every movement here is CSS: it costs nothing on the server and stops when the screen does. */
+/* Night is the main mode: the room after dark, near-black and quiet, with candlelight in the corners. */
+:root {
+  color-scheme: dark;
+  --paper: #18181B; --surface: #26262B; --ink: #ECEAF2; --muted: #A39DB4; --line: #34333B;
+  --accent: #9A7FE4; --accent-strong: #C3B1FF; --accent-soft: #2C2640; --on-accent: #FFFFFF;
+  --butter: #2E2A1E; --butter-line: #4A4022; --lilac: #29253A; --lilac-line: #3B3452; --rose: #33232A; --rose-line: #4C2F3A;
+  --glow: rgba(255, 205, 96, .16); --glow-soft: rgba(255, 220, 140, .09); --halo: rgba(255, 206, 92, .32);
+  --bud-1: #A58BEA; --bud-2: #BBA4F0; --bud-3: #D6C8F6; --stem: #7FA585;
+  --user-bg: linear-gradient(135deg, #7E62D2, #5D43AE);
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 28px rgba(0,0,0,.35);
+  --f-display: "Fraunces", Georgia, serif;
+  --f-body: "Nunito", "Segoe UI", system-ui, sans-serif;
+  --col: 640px;
+}
+/* Day: lavender light, for those who ask for it in the pantry. */
+:root[data-theme="day"] {
+  color-scheme: light;
+  --paper: #F8F5FC; --surface: #FFFFFF; --ink: #2B2541; --muted: #6B6485; --line: #E7E0F2;
+  --accent: #7A5BC9; --accent-strong: #6447B3; --accent-soft: #EEE8FB; --on-accent: #FFFFFF;
+  --butter: #FFF7DA; --butter-line: #F3E3A6; --lilac: #F3ECFD; --lilac-line: #E2D5F7; --rose: #FCECF0; --rose-line: #F2D3DC;
+  --glow: rgba(255, 221, 120, .55); --glow-soft: rgba(255, 236, 170, .38); --halo: rgba(255, 214, 102, .55);
+  --bud-1: #8D6FD8; --bud-2: #A58BE0; --bud-3: #C3AEEC; --stem: #6B8F71;
+  --user-bg: linear-gradient(135deg, #8667D6, #6A4CC0);
+  --shadow: 0 1px 2px rgba(60,40,110,.05), 0 10px 28px rgba(60,40,110,.08);
+}
+
+* { box-sizing: border-box }
+html, body { min-height: 100% }
+body { margin: 0; color: var(--ink); font: 16px/1.55 var(--f-body); -webkit-font-smoothing: antialiased; background: var(--paper);
+  transition: background-color .6s ease, color .6s ease; overflow-x: hidden }
+button, input, textarea { font: inherit; color: inherit }
+button { cursor: pointer }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap }
+a { color: var(--accent-strong) }
+
+/* Candle glows and drifting petals, behind everything */
+.room { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden }
+.glow { position: absolute; border-radius: 50%; filter: blur(48px); opacity: .9; will-change: transform }
+.glow.g1 { width: 62vmax; height: 62vmax; left: -22vmax; top: -26vmax; background: radial-gradient(circle, var(--glow), transparent 65%); animation: drift1 38s ease-in-out infinite alternate }
+.glow.g2 { width: 52vmax; height: 52vmax; right: -24vmax; top: 28vh; background: radial-gradient(circle, var(--glow-soft), transparent 65%); animation: drift2 46s ease-in-out infinite alternate }
+.glow.g3 { width: 46vmax; height: 46vmax; left: 10vw; bottom: -30vmax; background: radial-gradient(circle, rgba(167,139,250,.22), transparent 65%); animation: drift1 54s ease-in-out infinite alternate-reverse }
+@keyframes drift1 { to { transform: translate(8vmax, 6vmax) scale(1.08) } }
+@keyframes drift2 { to { transform: translate(-7vmax, -5vmax) scale(.94) } }
+.petal { position: absolute; top: -6vh; width: 9px; height: 13px; border-radius: 60% 60% 60% 60% / 70% 70% 40% 40%; background: var(--bud-3); opacity: 0;
+  animation: fall linear infinite }
+.petal:nth-child(4) { left: 12%; animation-duration: 26s; animation-delay: -4s }
+.petal:nth-child(5) { left: 34%; animation-duration: 31s; animation-delay: -17s; background: var(--bud-2); transform: scale(.8) }
+.petal:nth-child(6) { left: 58%; animation-duration: 28s; animation-delay: -9s }
+.petal:nth-child(7) { left: 81%; animation-duration: 34s; animation-delay: -23s; background: var(--bud-2) }
+.petal:nth-child(8) { left: 93%; animation-duration: 29s; animation-delay: -12s; transform: scale(.7) }
+@keyframes fall {
+  0% { opacity: 0; transform: translate(0, 0) rotate(0) }
+  10% { opacity: .55 }
+  50% { transform: translate(-4vw, 55vh) rotate(160deg) }
+  90% { opacity: .45 }
+  100% { opacity: 0; transform: translate(3vw, 112vh) rotate(320deg) }
+}
+
+.bar { position: sticky; top: 0; z-index: 5; padding-top: env(safe-area-inset-top, 0px);
+  background: color-mix(in srgb, var(--paper) 78%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 70%, transparent) }
+.bar-in { max-width: var(--col); margin: 0 auto; display: flex; align-items: center; gap: 10px; padding: 10px 16px }
+.who { flex: 1; min-width: 0; display: grid }
+.who h1 { margin: 0; font: 600 21px/1.1 var(--f-display); letter-spacing: -.01em }
+.who small { font: 700 12.5px/1.3 var(--f-body); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.round { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface);
+  display: inline-grid; place-items: center; color: var(--accent-strong); padding: 0; transition: box-shadow .3s, border-color .3s, transform .2s }
+.round:hover { border-color: var(--accent); box-shadow: 0 0 0 4px var(--glow-soft), 0 0 18px var(--glow) }
+.round:active { transform: scale(.94) }
+.round.send { background: var(--accent); border-color: var(--accent); color: var(--on-accent) }
+
+/* The butler: a sprig of lavender that sways, breathes while it thinks, and bows when it speaks */
+.presence { display: grid; justify-items: center; padding: 22px 0 2px }
+.butler-sprig { position: relative; width: 84px; height: 84px }
+.butler-sprig::before { content: ""; position: absolute; inset: -18px; border-radius: 50%;
+  background: radial-gradient(circle, var(--halo), transparent 68%); animation: halo 6s ease-in-out infinite }
+.butler-sprig svg { position: relative; width: 100%; height: 100%; overflow: visible }
+.butler-sprig .plant { transform-origin: 24px 40px; animation: sway 7s ease-in-out infinite }
+.butler-sprig .bud { animation: twinkle 4.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center }
+.butler-sprig .bud:nth-of-type(2) { animation-delay: .5s } .butler-sprig .bud:nth-of-type(3) { animation-delay: 1s }
+.butler-sprig .bud:nth-of-type(4) { animation-delay: 1.5s } .butler-sprig .bud:nth-of-type(5) { animation-delay: 2s }
+.butler-sprig .bud:nth-of-type(6) { animation-delay: 2.5s } .butler-sprig .bud:nth-of-type(7) { animation-delay: 3s }
+.butler-sprig.bow .plant { animation: bow .9s cubic-bezier(.3,.7,.3,1), sway 7s ease-in-out .9s infinite }
+body.busy .butler-sprig::before { animation: halo 1.2s ease-in-out infinite }
+body.busy .butler-sprig .bud { animation-duration: 1.2s }
+@keyframes sway { 0%, 100% { transform: rotate(-3deg) } 50% { transform: rotate(3deg) } }
+@keyframes bow { 0% { transform: rotate(0) } 35% { transform: rotate(9deg) translateY(1px) } 100% { transform: rotate(-3deg) } }
+@keyframes halo { 0%, 100% { opacity: .65; transform: scale(.94) } 50% { opacity: 1; transform: scale(1.06) } }
+@keyframes twinkle { 0%, 100% { filter: none; transform: scale(1) } 50% { filter: drop-shadow(0 0 3px rgba(255,214,102,.9)); transform: scale(1.06) } }
+
+main { max-width: var(--col); margin: 0 auto; padding: 6px 16px 170px; display: flex; flex-direction: column; gap: 10px }
+.msg { max-width: 92%; animation: rise .5s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i, 0) * 140ms) }
+@keyframes rise { from { opacity: 0; transform: translateY(10px) scale(.98); filter: blur(2px) } }
+.msg.butler { align-self: flex-start; background: var(--surface); border: 1px solid var(--line); border-radius: 4px 18px 18px 18px; padding: 11px 14px; box-shadow: var(--shadow);
+  transition: background-color .6s, border-color .6s }
+.msg.butler p { margin: 0 }
+.msg.butler p + p { margin-top: 8px }
+.msg.hello { font: 500 17.5px/1.45 var(--f-display); padding: 13px 16px; position: relative; overflow: hidden }
+.msg.hello::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(110deg, transparent 35%, var(--glow-soft) 50%, transparent 65%); transform: translateX(-100%);
+  animation: shine 2.6s ease .6s both }
+@keyframes shine { to { transform: translateX(100%) } }
+.msg.money { background: var(--butter); border-color: var(--butter-line); box-shadow: var(--shadow), 0 0 26px var(--glow-soft) }
+.msg.ask { background: var(--lilac); border-color: var(--lilac-line) }
+.msg.warn { background: var(--rose); border-color: var(--rose-line) }
+.msg.quiet { box-shadow: none; background: color-mix(in srgb, var(--surface) 60%, transparent); color: var(--muted); font-size: 15px }
+.msg.user { align-self: flex-end; background: var(--user-bg); color: #fff; border-radius: 18px 18px 4px 18px; padding: 9px 14px; box-shadow: var(--shadow) }
+
+/* While the butler thinks: three soft dots */
+body.busy main::after { content: ""; align-self: flex-start; width: 58px; height: 34px; border-radius: 4px 18px 18px 18px;
+  border: 1px solid var(--line); animation: rise .3s ease both;
+  background: radial-gradient(circle 4px, var(--accent) 98%, transparent) 14px 50% / 8px 8px no-repeat,
+    radial-gradient(circle 4px, var(--accent) 98%, transparent) 25px 50% / 8px 8px no-repeat,
+    radial-gradient(circle 4px, var(--accent) 98%, transparent) 36px 50% / 8px 8px no-repeat, var(--surface);
+  -webkit-mask: linear-gradient(90deg, #000 30%, rgba(0,0,0,.35) 50%, #000 70%) 0 0 / 300% 100%; animation: rise .3s ease both, dots 1.1s linear infinite }
+@keyframes dots { from { -webkit-mask-position: 100% 0 } to { -webkit-mask-position: -50% 0 } }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px }
+.chip { border: 1px solid var(--lilac-line); background: var(--surface); color: var(--accent-strong); border-radius: 999px; padding: 6px 13px; font-weight: 700; font-size: 14.5px;
+  transition: box-shadow .3s, border-color .3s, transform .15s }
+.chip:hover { border-color: var(--accent); box-shadow: 0 0 0 3px var(--glow-soft), 0 0 16px var(--glow) }
+.chip:active { transform: scale(.96) }
+.chip.main { background: var(--accent); border-color: var(--accent); color: var(--on-accent) }
+
+.ledger { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 4px }
+.ledger div { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; text-align: center; animation: rise .5s ease both;
+  animation-delay: calc(var(--i, 0) * 140ms + var(--j, 0) * 90ms) }
+.ledger b { display: block; font: 600 22px/1.2 var(--f-display); color: var(--ink) }
+.ledger div:nth-child(2) b { text-shadow: 0 0 14px var(--glow) }
+.ledger small { color: var(--muted); font-weight: 700; font-size: 12.5px }
+
+.dock { position: fixed; left: 0; right: 0; bottom: 0; padding: 8px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(transparent, var(--paper) 32%) }
+.dock .chips { max-width: var(--col); margin: 0 auto 8px }
+.composer { max-width: var(--col); margin: 0 auto; display: flex; gap: 8px; align-items: center; background: var(--surface);
+  border: 1px solid var(--line); border-radius: 999px; padding: 5px 5px 5px 16px; box-shadow: var(--shadow); transition: box-shadow .4s, border-color .4s }
+.composer:focus-within { border-color: var(--accent); box-shadow: var(--shadow), 0 0 0 4px var(--glow-soft), 0 0 30px var(--glow) }
+.composer input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; padding: 8px 0 }
+.composer input::placeholder { color: var(--muted) }
+
+.welcome { display: grid; gap: 10px; margin-top: 6px; animation: rise .5s ease .3s both }
+.welcome input { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; background: var(--surface); width: 100% }
+
+dialog { border: 1px solid var(--line); border-radius: 22px; padding: 0; width: min(560px, calc(100% - 24px)); max-height: 86vh; box-shadow: var(--shadow), 0 0 60px var(--glow-soft);
+  color: var(--ink); background: var(--surface) }
+dialog[open] { animation: rise .35s cubic-bezier(.2,.8,.2,1) }
+dialog::backdrop { background: rgba(24,20,36,.35); backdrop-filter: blur(3px) }
+#sheet-in { padding: 20px 18px }
+#sheet-in h2 { margin: 0 0 10px; font: 600 22px/1.2 var(--f-display) }
+#sheet-in h3 { margin: 18px 0 4px; font: 600 17px/1.3 var(--f-display) }
+#sheet-in p { margin: 6px 0 }
+#sheet-in .muted { color: var(--muted); font-size: 14.5px }
+.stone { border-left: 3px solid var(--accent-soft); padding: 2px 0 2px 12px; margin: 14px 0 }
+.stone .lost { color: var(--muted); font-weight: 700; font-size: 13.5px }
+.stone .lesson { background: var(--lilac); border-radius: 10px; padding: 8px 10px; margin-top: 6px; font-size: 15px }
+.copy { display: flex; gap: 6px; margin: 8px 0 }
+.copy input { flex: 1; min-width: 0; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; font-size: 13.5px; background: var(--paper) }
+.meter { height: 8px; border-radius: 99px; background: var(--accent-soft); overflow: hidden; margin: 6px 0 }
+.meter i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), #E9B949); box-shadow: 0 0 10px var(--glow) }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important }
+  .petal { display: none }
+}
