@@ -156,6 +156,18 @@ export function apply(house, action, { by, today }) {
       story: clean(a.story, 280), lesson: clean(a.lesson, 280) });
     return { house: h, said: `Stepping stone ${n} is in the story.`, stone: n };
   }
+  if (a.type === 'leaveNote') {
+    // Claude's words for the butler to hand over at the door. Written when Nero talks to Claude, never generated here.
+    const text = String(a.text ?? '').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim().slice(0, 1200);
+    if (!text) throw new Error('What should the note say?');
+    h.notes = [...(h.notes || []), { id: rid(), text, date: today, by, read: false }].slice(-10);
+    return { house: h, said: 'The note is on the silver tray. It will be waiting at the door.' };
+  }
+  if (a.type === 'readNote') {
+    const n = (h.notes || []).find((x) => x.id === a.id);
+    if (n) n.read = true;
+    return { house: h, said: 'Put away.' };
+  }
   if (a.type === 'rename') {
     const p = h.people.find((x) => x.id === by);
     if (p && clean(a.name)) p.name = clean(a.name, 40);
@@ -189,6 +201,9 @@ export function brief(house, today, personId, hour = 12) {
       text: `${couponValue(c)} at ${c.shop} ends ${niceDay(c.ends, today)}.${c.note ? ' ' + c.note : ''}`,
       replies: [{ label: 'Used it', action: { type: 'useCoupon', id: c.id } }, { label: 'Calendar', calendar: c.id }] });
   }
+  const note = (house.notes || []).filter((n) => !n.read && daysUntil(n.date, today) >= -3).slice(-1)[0];
+  if (note) lines.unshift({ kind: 'letter', note: note.id, text: note.text,
+    replies: [{ label: 'Thank you', action: { type: 'readNote', id: note.id } }] });
   const unlearned = house.stones.filter((s) => !s.lesson).slice(-1)[0];
   if (unlearned) lines.push({ kind: 'ask', stone: unlearned.n,
     text: `About stepping stone ${unlearned.n}, "${unlearned.title}": what would have helped you catch it?`, lesson: unlearned.n });
@@ -197,7 +212,11 @@ export function brief(house, today, personId, hour = 12) {
   let hello;
   if (!lines.length && !open.length) hello = `${part}${name ? ', ' + name : ''}. All is quiet. If a coupon comes your way, tell me in one sentence and I will watch its last day.`;
   else if (!lines.length) hello = `${part}${name ? ', ' + name : ''}. Nothing needs you today. I am watching ${later.length} coupon${later.length === 1 ? '' : 's'} for you.`;
-  else hello = `${part}${name ? ', ' + name : ''}. ${lines.length === 1 ? 'One thing' : lines.length + ' things'} worth a moment.`;
+  else {
+    const things = lines.filter((l) => l.kind !== 'letter').length;
+    hello = `${part}${name ? ', ' + name : ''}. ${note ? 'A note is waiting for you' + (things ? ', and ' : '.') : ''}${things ? (things === 1 ? 'one thing' : things + ' things') + ' worth a moment.' : ''}`;
+    if (!note) hello = hello.replace(/\. one/, '. One').replace(/\. (\d)/, '. $1');
+  }
   return { hello, lines, watching: later.map((c) => ({ id: c.id, text: `${couponValue(c)} at ${c.shop}, until ${niceDay(c.ends, today)}` })), ledger: ledger(house) };
 }
 

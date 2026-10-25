@@ -91,6 +91,12 @@ test('Claude can read the brief and keep a coupon through the link', async () =>
   assert.match(kept.body.result.content[0].text, /Kept: €5 at Carrefour/);
   const story = await rpc('tools/call', { name: 'laventina_story', arguments: {} });
   assert.equal(JSON.parse(story.body.result.content[0].text).stones.length, 2);
+  const note = await rpc('tools/call', { name: 'laventina_leave_note', arguments: { text: 'Good evening.\n\nThe Carrefour coupon ends Friday: Thursday after work is the moment.' } });
+  assert.match(note.body.result.content[0].text, /silver tray/);
+  const door = await call(store, '/api/house', { token: a.body.token });
+  assert.equal(door.body.brief.lines[0].kind, 'letter');
+  await call(store, '/api/do', { method: 'POST', token: a.body.token, body: { action: { type: 'readNote', id: door.body.brief.lines[0].note } } });
+  assert.notEqual((await call(store, '/api/house', { token: a.body.token })).body.brief.lines[0]?.kind, 'letter');
   // A person's own token is not a Claude link, and closing links works.
   assert.equal((await call(store, `/mcp/${a.body.token}`, { method: 'POST', body: { jsonrpc: '2.0', id: 1, method: 'ping' } })).status, 401);
   await call(store, '/api/forget-links', { method: 'POST', body: {}, token: a.body.token });

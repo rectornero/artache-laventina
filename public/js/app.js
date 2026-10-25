@@ -135,7 +135,8 @@ function show(v, first = false) {
   if (first) say('Your house is open. I have already written the first two chapters of its story: the coupon and the frost. Tap the book to read them.', 'ask');
   say(v.brief.hello, 'hello');
   for (const line of v.brief.lines) {
-    const m = say(line.text, line.kind);
+    const m = say(line.kind === 'letter' ? line.text.split(/\n+/) : line.text, line.kind);
+    if (line.kind === 'letter') m.append(el('div', 'sign', 'Written by Claude, with the butler\'s pen'));
     const list = (line.replies || []).map((r) => ({ label: r.label, main: !!r.action && r.action.type === 'useCoupon',
       run: () => (r.calendar ? calendar(r.calendar) : act(r.action, r.label)) }));
     if (line.lesson) list.push({ label: 'Tell you', main: true, run: () => { mode = { kind: 'lesson', n: line.lesson }; $('#say').placeholder = 'What would have helped?'; $('#say').focus(); } });
