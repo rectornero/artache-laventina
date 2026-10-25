@@ -9,9 +9,10 @@
 
 # A production deploy costs 15 credits. Pushes to the production branch only build when the
 # commit message says [deploy]; everything else waits. (Exit 0 = skip the build.)
+# A deliberate upload without git history (CLI or MCP deploy) always builds.
 # Branch deploys and Deploy Previews are free and always build.
 [context.production]
-  ignore = "git log -1 --pretty=%B | grep -qF '[deploy]' && exit 1 || exit 0"
+  ignore = "msg=$(git log -1 --pretty=%B 2>/dev/null) || exit 1; case \"$msg\" in *'[deploy]'*) exit 1;; *) exit 0;; esac"
 
 [[headers]]
   for = "/*"
