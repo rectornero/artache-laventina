@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { parseCoupon, newHouse, apply, brief, ledger, couponICS, addDays } from '../public/js/laventina.mjs';
+import { parseCoupon, newHouse, apply, brief, ledger, couponICS, addDays, localNow } from '../public/js/laventina.mjs';
 
 const today = '2026-10-25'; // a Sunday
 
@@ -55,4 +55,10 @@ test('the calendar rings the evening before, with no server', () => {
   assert.match(ics, /DTSTART;VALUE=DATE:20261030/);
   assert.match(ics, /TRIGGER:-PT15H/);
   assert.match(ics, /SUMMARY:Last day: €5 at Carrefour/);
+});
+
+test("Claude's brief uses the house's time zone, not the server's", () => {
+  assert.deepEqual(localNow(new Date('2026-10-25T23:30:00Z'), 'Europe/Rome'), { today: '2026-10-26', hour: 0 });
+  assert.deepEqual(localNow(new Date('2026-10-25T17:14:00Z'), 'Europe/Rome'), { today: '2026-10-25', hour: 18 });
+  assert.equal(newHouse({ name: 'C', person: 'N', today: '2026-10-25', tz: 'bad tz!' }).tz, 'Europe/Rome');
 });

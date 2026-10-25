@@ -13,6 +13,16 @@ export function todayISO(d = new Date()) {
   const p = (n) => String(n).padStart(2, '0');
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
 }
+// Today's date and hour in a time zone, for callers without a clock of their own (Claude).
+export function localNow(now = new Date(), tz = 'Europe/Rome') {
+  try {
+    const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23' })
+      .formatToParts(now).map((x) => [x.type, x.value]));
+    return { today: `${parts.year}-${parts.month}-${parts.day}`, hour: Number(parts.hour) };
+  } catch {
+    return { today: todayISO(now), hour: now.getHours() };
+  }
+}
 const toUTC = (iso) => Date.UTC(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10));
 export const addDays = (iso, n) => new Date(toUTC(iso) + n * DAY).toISOString().slice(0, 10);
 export const daysUntil = (iso, today) => Math.round((toUTC(iso) - toUTC(today)) / DAY);
@@ -84,9 +94,10 @@ export const CHAPTERS = [
     lesson: 'Nothing runs on its own. Nothing costs anything unless someone is using it. Every cost gets a price before it ships, and the butler watches its own meter.' },
 ];
 
-export function newHouse({ name, person, today, id = rid() }) {
+export function newHouse({ name, person, today, tz, id = rid() }) {
   return {
     v: 1, name: String(name || 'Our house').slice(0, 60), created: today,
+    tz: typeof tz === 'string' && /^[A-Za-z_]+(\/[A-Za-z0-9_+-]+){0,2}$/.test(tz) ? tz : 'Europe/Rome',
     people: [{ id, name: String(person || 'Nero').slice(0, 40) }],
     coupons: [],
     stones: CHAPTERS.map((c) => ({ id: rid(), ...c })),

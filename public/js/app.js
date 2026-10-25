@@ -110,7 +110,7 @@ async function welcome(code) {
     go.disabled = true;
     try {
       const v = code ? await api('/join', { method: 'POST', auth: false, body: { code, person: name.value } })
-        : await api('/start', { method: 'POST', auth: false, body: { person: name.value, house: house.value } });
+        : await api('/start', { method: 'POST', auth: false, body: { person: name.value, house: house.value, tz: Intl.DateTimeFormat().resolvedOptions().timeZone } });
       store.set(v.token);
       show(v, true);
     } catch (e) { go.disabled = false; say(e.message, 'quiet'); }
